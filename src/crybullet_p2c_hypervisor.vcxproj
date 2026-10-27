@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{04AD3C95-F58E-4394-B82D-1B7C27D1ECDA}</ProjectGuid>
+    <RootNamespace>crybullet_p2c_hypervisor</RootNamespace>
+    <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+    <Platform Condition="'$(Platform)' == ''">x64</Platform>
+    <WindowsTargetPlatformVersion>$(LatestTargetPlatformVersion)</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>Driver</ConfigurationType>
+    <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
+    <DriverType>KMDF</DriverType>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries Condition="'$(Configuration)' == 'Debug'">true</UseDebugLibraries>
+    <UseDebugLibraries Condition="'$(Configuration)' == 'Release'">false</UseDebugLibraries>
+    <Driver_SpectreMitigation>false</Driver_SpectreMitigation>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup>
+    <OutDir>$(MSBuildThisFileDirectory)..\artifacts\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(MSBuildThisFileDirectory)..\artifacts\obj\$(Platform)\$(Configuration)\</IntDir>
+    <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
+    <EnableInf2cat>false</EnableInf2cat>
+    <SignMode>Off</SignMode>
+    <ApiValidator_Enable>false</ApiValidator_Enable>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)svm;$(ProjectDir)..\artifacts\deps\zydis\include;$(ProjectDir)..\artifacts\deps\zycore\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <PreprocessorDefinitions>ZYAN_NO_LIBC;ZYCORE_STATIC_BUILD;ZYDIS_STATIC_BUILD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <ControlFlowGuard>false</ControlFlowGuard>
+      <DisableSpecificWarnings>4083;4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\artifacts\deps\lib\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Zycore.lib;Zydis.lib;cng.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <EntryPointSymbol>driver_entry</EntryPointSymbol>
+      <TreatLinkerWarningAsErrors>false</TreatLinkerWarningAsErrors>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+    <MASM>
+      <IncludePaths>$(ProjectDir)svm\asm;$(ProjectDir)vtx\asm;%(IncludePaths)</IncludePaths>
+    </MASM>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="svm\handlers_ctx\control_registers\cr_svm.cpp" />
+    <ClCompile Include="svm\handlers_ctx\cpuid\cpuid_svm.cpp" />
+    <ClCompile Include="svm\handlers_ctx\debug_registers\dr_svm.cpp" />
+    <ClCompile Include="svm\handlers_ctx\exceptions\exceptions_svm.cpp" />
+    <ClCompile Include="svm\handlers_ctx\events\events_svm.cpp" />
+    <ClCompile Include="svm\handlers_ctx\efer\efer_svm.cpp" />
+    <ClCompile Include="svm\handlers_ctx\gif\gif_svm.cpp" />
+    <ClCompile Include="svm\handlers_ctx\nmi\nmi_svm.cpp" />
+    <ClCompile Include="svm\handlers_ctx\timing\timing_svm.cpp" />
+    <ClCompile Include="svm\handlers_ctx\vmm_handlers.cpp" />
+    <ClCompile Include="svm\utilities_ctx\npt\mmio\mmio_svm.cpp" />
+    <ClCompile Include="svm\handlers_ctx\msr\msr_svm.cpp" />
+    <ClCompile Include="svm\handlers_ctx\npf\npf_svm.cpp" />
+    <ClCompile Include="svm\handlers_ctx\vmmcall\vmmcall_svm.cpp" />
+    <ClCompile Include="svm\svm.cpp" />
+    <ClCompile Include="svm\utilities_ctx\debug\debug.cpp" />
+    <ClCompile Include="svm\utilities_ctx\disassembler\disassembler.cpp" />
+    <ClCompile Include="svm\utilities_ctx\gdt\gdt.cpp" />
+    <ClCompile Include="svm\utilities_ctx\hook\hook.cpp" />
+    <ClCompile Include="svm\utilities_ctx\idt\idt.cpp" />
+    <ClCompile Include="svm\utilities_ctx\logger\logger.cpp" />
+    <ClCompile Include="svm\utilities_ctx\memory\hide_page\hide_page.cpp" />
+    <ClCompile Include="svm\utilities_ctx\memory\memory.cpp" />
+    <ClCompile Include="svm\utilities_ctx\memory\memory_access\memory_access.cpp" />
+    <ClCompile Include="svm\utilities_ctx\memory\page_table\page_table.cpp" />
+    <ClCompile Include="svm\utilities_ctx\msr\msr.cpp" />
+    <ClCompile Include="svm\utilities_ctx\npt\npt.cpp" />
+    <ClCompile Include="svm\utilities_ctx\tpm\crypto\tpm_crypto.cpp" />
+    <ClCompile Include="svm\utilities_ctx\tpm\tpm.cpp" />
+    <ClCompile Include="svm\utilities_ctx\utilities.cpp" />
+    <ClCompile Include="vtx\utilities_ctx\utilities.cpp">
+      <ObjectFileName>$(IntDir)vtx\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="vtx\utilities_ctx\vmx\vmx.cpp" />
+    <ClCompile Include="vtx\utilities_ctx\ept\ept.cpp" />
+    <ClCompile Include="vtx\utilities_ctx\ept\mmio\mmio_vtx.cpp" />
+    <ClCompile Include="vtx\utilities_ctx\memory\memory_access_vtx.cpp" />
+    <ClCompile Include="vtx\utilities_ctx\hook\hook.cpp">
+      <ObjectFileName>$(IntDir)vtx\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="vtx\handlers_ctx\vmm_handlers.cpp">
+      <ObjectFileName>$(IntDir)vtx\handlers\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="vtx\handlers_ctx\cache\cache_vtx.cpp" />
+    <ClCompile Include="vtx\handlers_ctx\control_registers\cr_vtx.cpp" />
+    <ClCompile Include="vtx\handlers_ctx\descriptors\descriptors_vtx.cpp" />
+    <ClCompile Include="vtx\handlers_ctx\xcr\xcr_vtx.cpp" />
+    <ClCompile Include="vtx\handlers_ctx\timing\timing_vtx.cpp" />
+    <ClCompile Include="vtx\handlers_ctx\cpuid\cpuid_vtx.cpp" />
+    <ClCompile Include="vtx\handlers_ctx\msr\msr_vtx.cpp" />
+    <ClCompile Include="vtx\handlers_ctx\vmcall\vmcall_vtx.cpp" />
+    <ClCompile Include="vtx\handlers_ctx\mtf\mtf_vtx.cpp" />
+    <ClCompile Include="vtx\handlers_ctx\epv\epv_vtx.cpp" />
+    <ClCompile Include="vtx\handlers_ctx\events\events_vtx.cpp" />
+    <ClCompile Include="vtx\handlers_ctx\debug_registers\dr_vtx.cpp" />
+    <ClCompile Include="vtx\vtx.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="includes.h" />
+    <ClInclude Include="svm\defines_ctx\amd.hpp" />
+    <ClInclude Include="svm\defines_ctx\cpu.hpp" />
+    <ClInclude Include="svm\defines_ctx\descriptors-info.hpp" />
+    <ClInclude Include="svm\defines_ctx\exception-handler.hpp" />
+    <ClInclude Include="svm\defines_ctx\gdt-data.hpp" />
+    <ClInclude Include="svm\defines_ctx\ia32.hpp" />
+    <ClInclude Include="svm\defines_ctx\interrupt.hpp" />
+    <ClInclude Include="svm\defines_ctx\memory-data.hpp" />
+    <ClInclude Include="svm\defines_ctx\msr-data.hpp" />
+    <ClInclude Include="svm\defines_ctx\spin-lock.hpp" />
+    <ClInclude Include="svm\handlers_ctx\control_registers\cr_svm.hpp" />
+    <ClInclude Include="svm\handlers_ctx\cpuid\cpuid_svm.hpp" />
+    <ClInclude Include="svm\handlers_ctx\debug_registers\dr_svm.hpp" />
+    <ClInclude Include="svm\handlers_ctx\exceptions\exceptions_svm.hpp" />
+    <ClInclude Include="svm\handlers_ctx\events\events_svm.hpp" />
+    <ClInclude Include="svm\handlers_ctx\efer\efer_svm.hpp" />
+    <ClInclude Include="svm\handlers_ctx\gif\gif_svm.hpp" />
+    <ClInclude Include="svm\handlers_ctx\nmi\nmi_svm.hpp" />
+    <ClInclude Include="svm\handlers_ctx\timing\timing_svm.hpp" />
+    <ClInclude Include="svm\handlers_ctx\vmm_handlers.hpp" />
+    <ClInclude Include="svm\utilities_ctx\npt\mmio\mmio_svm.hpp" />
+    <ClInclude Include="svm\utilities_ctx\hook\hook.hpp" />
+    <ClInclude Include="svm\utilities_ctx\idt\idt.hpp" />
+    <ClInclude Include="svm\utilities_ctx\logger\logger.hpp" />
+    <ClInclude Include="svm\utilities_ctx\memory\hide_page\hide_page.hpp" />
+    <ClInclude Include="svm\utilities_ctx\memory\memory_access\memory_access.hpp" />
+    <ClInclude Include="svm\utilities_ctx\memory\page_table\page_table.hpp" />
+    <ClInclude Include="svm\utilities_ctx\msr\msr.hpp" />
+    <ClInclude Include="svm\defines_ctx\npt-data.hpp" />
+    <ClInclude Include="svm\defines_ctx\virtual-memory.hpp" />
+    <ClInclude Include="svm\defines_ctx\vmcb.hpp" />
+    <ClInclude Include="svm\defines_ctx\vmexit.hpp" />
+    <ClInclude Include="svm\defines_ctx\vprocessor-data.hpp" />
+    <ClInclude Include="svm\handlers_ctx\msr\msr_svm.hpp" />
+    <ClInclude Include="svm\handlers_ctx\npf\npf_svm.hpp" />
+    <ClInclude Include="svm\handlers_ctx\vmmcall\vmmcall_svm.hpp" />
+    <ClInclude Include="svm\svm.hpp" />
+    <ClInclude Include="svm\utilities_ctx\debug\debug.hpp" />
+    <ClInclude Include="svm\utilities_ctx\disassembler\disassembler.hpp" />
+    <ClInclude Include="svm\utilities_ctx\memory\memory.hpp" />
+    <ClInclude Include="svm\utilities_ctx\npt\npt.hpp" />
+    <ClInclude Include="svm\defines_ctx\bitset.hpp" />
+    <ClInclude Include="svm\utilities_ctx\tpm\crypto\tpm_crypto.hpp" />
+    <ClInclude Include="svm\utilities_ctx\tpm\includes\tpm12.h" />
+    <ClInclude Include="svm\utilities_ctx\tpm\includes\tpm20.h" />
+    <ClInclude Include="svm\utilities_ctx\tpm\tpm.hpp" />
+    <ClInclude Include="svm\utilities_ctx\utilities.hpp" />
+    <ClInclude Include="vtx\defines_ctx\intel.hpp" />
+    <ClInclude Include="vtx\defines_ctx\vmcs.hpp" />
+    <ClInclude Include="vtx\defines_ctx\ept.hpp" />
+    <ClInclude Include="vtx\defines_ctx\vprocessor-data.hpp" />
+    <ClInclude Include="vtx\utilities_ctx\utilities.hpp" />
+    <ClInclude Include="vtx\utilities_ctx\vmx\vmx.hpp" />
+    <ClInclude Include="vtx\utilities_ctx\ept\ept.hpp" />
+    <ClInclude Include="vtx\utilities_ctx\ept\mmio\mmio_vtx.hpp" />
+    <ClInclude Include="vtx\utilities_ctx\memory\memory_access_vtx.hpp" />
+    <ClInclude Include="vtx\utilities_ctx\hook\hook.hpp" />
+    <ClInclude Include="vtx\handlers_ctx\vmm_handlers.hpp" />
+    <ClInclude Include="vtx\handlers_ctx\cache\cache_vtx.hpp" />
+    <ClInclude Include="vtx\handlers_ctx\control_registers\cr_vtx.hpp" />
+    <ClInclude Include="vtx\handlers_ctx\descriptors\descriptors_vtx.hpp" />
+    <ClInclude Include="vtx\handlers_ctx\xcr\xcr_vtx.hpp" />
+    <ClInclude Include="vtx\handlers_ctx\timing\timing_vtx.hpp" />
+    <ClInclude Include="vtx\handlers_ctx\cpuid\cpuid_vtx.hpp" />
+    <ClInclude Include="vtx\handlers_ctx\msr\msr_vtx.hpp" />
+    <ClInclude Include="vtx\handlers_ctx\vmcall\vmcall_vtx.hpp" />
+    <ClInclude Include="vtx\handlers_ctx\mtf\mtf_vtx.hpp" />
+    <ClInclude Include="vtx\handlers_ctx\epv\epv_vtx.hpp" />
+    <ClInclude Include="vtx\handlers_ctx\events\events_vtx.hpp" />
+    <ClInclude Include="vtx\handlers_ctx\debug_registers\dr_vtx.hpp" />
+    <ClInclude Include="vtx\vtx.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <MASM Include="svm\asm\svm_interrupt.asm" />
+    <MASM Include="svm\asm\svm_kpcr.asm" />
+    <MASM Include="svm\asm\svm_segments.asm" />
+    <MASM Include="svm\asm\svm_x64.asm">
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </MASM>
+    <MASM Include="vtx\asm\vtx_x64.asm">
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </MASM>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="svm\asm\svm_macro.inc">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="vtx\asm\vtx_macro.inc">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="svm\utilities_ctx\gdt\gdt.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="hv_spinlock.hpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <Target Name="CheckSourceDependencies" BeforeTargets="PrepareForBuild">
+    <Error Condition="!Exists('$(ProjectDir)..\artifacts\deps\zydis\include\Zydis\Zydis.h') Or !Exists('$(ProjectDir)..\artifacts\deps\lib\$(Configuration)\Zydis.lib') Or !Exists('$(ProjectDir)..\artifacts\deps\lib\$(Configuration)\Zycore.lib')" Text="Build the pinned source dependencies first by running scripts\build.ps1 -Configuration $(Configuration) from the repository root." />
+  </Target>
+</Project>

@@ -1,0 +1,26 @@
+# Local build output and Visual Studio state
+/artifacts/
+/src/libraries/
+.vs/
+**/x64/
+**/Debug/
+**/Release/
+*.user
+*.suo
+*.obj
+*.pdb
+*.sys
+*.log
+*.binlog
+*.tlog
+*.cache
+*.VC.db
+*.VC.opendb
+
+# Local signing and debugging material
+*.pfx
+*.p12
+*.key
+*.dmp
+HANDOFF.md
+load_hv_guest.ps1
