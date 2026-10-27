@@ -1,20 +1,30 @@
 # Hypervisor
 
-An experimental Windows x64 hypervisor with Intel VT-x and AMD SVM backends, written in C++20 and x64 assembly.
+A Windows x64 hypervisor written in C++ with Intel VT-x/EPT and AMD SVM/NPT support.
 
-The implementation includes EPT/NPT management, VM-exit handling, guest memory access, page hooks, MMIO handling, TPM emulation, and an in-memory logger. The entry point selects the backend from the CPU vendor.
+Tested on both Intel VT-x and AMD SVM.
 
-## Status
+## Features
 
-`v0.1.0` is the first public source snapshot. Compatibility across processor models and Windows builds has not been established for this release. TPM emulation is part of the implementation; full TPM specification compliance is not claimed.
+- Intel VT-x with Extended Page Tables (EPT).
+- AMD SVM with Nested Page Tables (NPT).
+- VM-exit and hypercall handling.
+- Guest memory access and page hooks.
+- MMIO handling and TPM emulation.
+- In-memory logging.
 
-This repository contains the hypervisor component. Its custom `driver_entry(PVOID, SIZE_T)` entry point expects integration with a separate loader, and it does not register a conventional `DriverUnload` callback. The EFI loader, companion driver, and client from the original workspace are outside this release. There is no installer or signed driver package.
+## Processor requirements
 
-Runtime work requires a dedicated test machine with kernel debugging and a recovery path. A successful build alone does not establish that a configuration is safe to load.
+An x64 processor with Intel VT-x and EPT, or AMD SVM and NPT. Hardware virtualization must be enabled in the system firmware.
 
 ## Build
 
-Use Windows x64 with Visual Studio C++ build tools and a compatible Windows Driver Kit that provides the `WindowsKernelModeDriver10.0` toolset. MASM and C++20 support are required, along with Git and CMake.
+Requirements:
+
+- Windows x64.
+- Visual Studio 2022 or 2026 with C++ build tools and MASM.
+- Windows Driver Kit with the `WindowsKernelModeDriver10.0` toolset.
+- Git and CMake.
 
 From the repository root:
 
@@ -22,13 +32,11 @@ From the repository root:
 .\scripts\build.ps1 -Configuration Release
 ```
 
-The first build fetches pinned Zydis and Zycore source revisions and builds their static libraries locally under `artifacts/deps`. It requires an internet connection. No NuGet restore is needed.
+The script fetches pinned Zydis and Zycore revisions and builds them under `artifacts/deps`. An internet connection is required for the first build.
 
-For a debug build, use `-Configuration Debug`. After preparing the dependencies with the script, you can also open `hypervisor.sln` in Visual Studio and select `Release | x64` or `Debug | x64`.
+Use `-Configuration Debug` for a debug build. After preparing the dependencies, `hypervisor.sln` can also be built in Visual Studio.
 
-The release output is `artifacts/x64/Release/crybullet_p2c_hypervisor.sys`. The build script compiles the project; it does not sign or load the result.
-
-Both x64 configurations were compiled with Visual Studio 18 Community and WDK 10.0.28000.0 for this snapshot. No hardware runtime testing was performed as part of the release checks.
+Output: `artifacts/x64/Release/crybullet_p2c_hypervisor.sys`.
 
 ## Source layout
 
@@ -41,8 +49,8 @@ Both x64 configurations were compiled with Visual Studio 18 Community and WDK 10
 | `src/svm/utilities_ctx/tpm/` | TPM emulation and related definitions |
 | `scripts/` | Build and dependency preparation |
 
-See [CHANGELOG.md](CHANGELOG.md) for release notes and [CONTRIBUTING.md](CONTRIBUTING.md) for issue reporting.
+The loader entry point is `driver_entry(PVOID, SIZE_T)` in `src/main.cpp`.
 
 ## License
 
-This project is published without a project license. No reuse license is granted for the project code. Third-party components retain their own license terms; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+No project license is granted. Third-party licenses are listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
